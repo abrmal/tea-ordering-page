@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>霸王茶姬点单页面</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <style>
+        body {
+            background-color: #f8f9fa; /* 页面背景色 */
+        }
+        .bg-red {
+            background-color: #ff3366; /* 红色背景 */
+        }
+        .card {
+            border: none;
+            border-radius: 15px; /* 圆角 */
+        }
+        .btn-primary, .btn-danger {
+            border-radius: 20px; /* 按钮圆角 */
+        }
+        .finish {
+            text-decoration: line-through; /* 划掉文本 */
+            color: gray; /* 可选：改变文本颜色 */
+        }
+        .active {
+            background-color: #ffcccc; /* 选中时背景色 */
+        }
+        .header-img {
+            max-width: 100px; /* 限制图片最大宽度 */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="jumbotron jumbotron-fluid bg-red text-white p-3 text-center">
+        <h1 class="display-4 d-inline">霸王茶姬</h1>
+        <img src="https://imgur.com/a/fH5WGdK" alt="二维码" class="header-img d-inline ml-3">
+        <p class="lead">订单项目</p>
+    </div>
+
+    <div class="container" id="app">
+        <div class="row">
+            <!--饮品添加-->
+            <div class="col-12 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="">饮品</label>
+                            <select class="form-control" v-model="drink">
+                                <option v-for="(item, index) in drinks" :key="index" :value="item.title">{{item.title}}</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="">杯型</label>
+                            <select class="form-control" v-model="cup">
+                                <option v-for="(item, index) in cups" :key="index" :value="item">{{item}}</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="">甜度</label>
+                            <select class="form-control" v-model="sugar">
+                                <option v-for="(item, index) in sugars" :key="index" :value="item">{{item}}</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="">温度</label>
+                            <select class="form-control" v-model="temp">
+                                <option v-for="(item, index) in temps" :key="index" :value="item">{{item}}</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="">配料</label>
+                            <div class="d-flex flex-wrap">
+                                <span 
+                                    v-for="(item, index) in opts" 
+                                    :key="index" 
+                                    :class="{'btn btn-danger m-1': true, 'active': opt.includes(item)}"
+                                    @click="toggleOpt(item)">
+                                    {{item}}
+                                </span>
+                            </div>
+                            <small class="form-text text-muted">点击以选择或取消配料</small>
+                        </div>
+
+                        <button type="button" @click="order()" class="btn btn-danger btn-lg btn-block">立即下单</button>
+                    </div>
+                </div>
+            </div>
+            <!--表格-->
+            <div class="col-12">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>订单编号</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(item, index) in teaList" :key="index" :class="{'finish': item.finish}">
+                            <td>
+                                订单{{index + 1}}
+                                <button type="button" class="btn btn-link" @click="item.showDetails = !item.showDetails">
+                                    {{ item.showDetails ? '收起' : '查看' }}
+                                </button>
+                                <span v-if="item.showDetails" class="ml-2">
+                                    <strong>杯型：</strong>{{item.cup}} | 
+                                    <strong>甜度：</strong>{{item.sugar}} | 
+                                    <strong>温度：</strong>{{item.temp}} | 
+                                    <strong>配料：</strong>
+                                    <span class="badge badge-pill badge-danger" v-for="(itemopt, idx) in item.opt" :key="idx">{{itemopt}}</span>
+                                </span>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-danger" @click="finish(item)">出货</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let vm = new Vue({
+            el: '#app',
+            data: {
+                drinks: [
+                    { id: 0, title: '红茶' },
+                    { id: 1, title: '绿茶' },
+                    { id: 2, title: '沱茶' },
+                ],
+                cups: ['大杯', '中杯', '小杯'],
+                sugars: ['全糖', '七分糖', '半糖', '三分糖', '无糖'],
+                temps: ['常温', '加冰'],
+                opts: ['红豆', '珍珠', '奶冻', '椰果'],
+
+                drink: "",
+                cup: '',
+                sugar: '',
+                temp: '',
+                opt: [],
+                teaList: [],
+            },
+            methods: {
+                toggleOpt: function(item) {
+                    const index = this.opt.indexOf(item);
+                    if (index === -1) {
+                        this.opt.push(item); // 添加选项
+                    } else {
+                        this.opt.splice(index, 1); // 移除选项
+                    }
+                },
+                order: function () {
+                    this.teaList.push({
+                        drink: this.drink,
+                        cup: this.cup,
+                        temp: this.temp,
+                        sugar: this.sugar,
+                        opt: this.opt.slice(), // 克隆当前的配料
+                        finish: false,
+                        showDetails: false // 控制详情显示
+                    });
+
+                    // 下单后重置配料选项
+                    this.opt = []; // 清空当前选中的配料
+                    this.drink = ""; // 选择重新设置
+                    this.cup = "";
+                    this.sugar = "";
+                    this.temp = "";
+                },
+
+                finish: function (item) {
+                    item.finish = true; // 设置完成标志
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
