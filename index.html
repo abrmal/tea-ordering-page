@@ -30,13 +30,22 @@
         .active {
             background-color: #ffcccc; /* 选中时背景色 */
         }
+        .header-img {
+            max-width: 70px; /* 缩小二维码最大宽度 */
+            margin-top: 10px; /* 图片上边距 */
+        }
+        .scan-text {
+            margin-top: 5px; /* 说明文本上边距 */
+            font-size: 14px; /* 说明文本字体大小 */
+        }
     </style>
 </head>
 
 <body>
-    <div class="jumbotron jumbotron-fluid bg-red text-white p-3 text-center">
+    <div class="jumbotron jumbotron-fluid bg-red text-white text-center p-4">
         <h1 class="display-4">霸王茶姬</h1>
-        <p class="lead">订单项目</p>
+        <img src="https://github.com/abrmal/tea-ordering-page/blob/main/CHAGEE.png?raw=true" alt="二维码" class="header-img">
+        <div class="scan-text">请手机扫码下单</div> <!-- 增加说明 -->
     </div>
 
     <div class="container" id="app">
